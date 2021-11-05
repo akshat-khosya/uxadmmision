@@ -1,19 +1,19 @@
 import React,{useEffect, useState } from 'react';
 import axios from 'axios';
+import {  useHistory } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Cookies from 'js-cookie';
-import Header from '../components/Header/Header';
-import SideBar from '../components/SideBar/SideBar';
+import Navbars from '../components/Navbar';
+import Instruction from '../components/Instruction';
+import Application from '../components/application';
+import Contactus from '../components/Contactus';
+import Profile from '../components/Profile';
+import Changepassword from '../components/Changepassword';
 function Dashboard(props){
-  const [sideBarExpand, setsideBarExpand] = useState((window.innerWidth > 880 ? true : false));
-  const [render, setRender] = useState(0);
-  const handleRender = (link) => {
-    setsideBarExpand((window.innerWidth > 880 ? true : false));
-    setRender(link + 1);
-  }
-  function logout(){
-    Cookies.remove('email');
-    Cookies.remove('password');
-    props.history.push("/");
+  let history = useHistory();
+  const [render,setRender]=useState(0);
+  const handelRender =(link)=>{
+    setRender(link);
   }
   useEffect(()=>{
     let Signin = {
@@ -25,13 +25,13 @@ function Dashboard(props){
   }
 
     
-      axios.post('http://localhost:4000/regiss/signin',Signin).then(function(response){
+      axios.post('http://localhost:4000/login',Signin).then(function(response){
           if(response.data.login===true){
             
               
               
           }else{
-            props.history.push("/");
+            history.push("/");
           }
       }).catch(function (error) {
           console.log(error);
@@ -41,31 +41,31 @@ function Dashboard(props){
         password:""
       }
       
-  },[])
-  const handleChange = (a) => {
-    switch (render) {
-      case 1:
-        setAllEvents(a);
-        break;
-      case 2:
-        setAllEvents(a);
-        break;
-      case 3:
-        setAllNotes(a);
-        break;
-      case 4:
-        setAllTasks(a);
-        break;
-      default:
-        console.log(a);
-        break;
-    }
-  }
+  })
+  
     return(
         <>
-         <Header sideBar={() => { setsideBarExpand(!sideBarExpand) }} GoTo={handleRender} onHelp={() => { setRender(5) }} />
-         <SideBar aside={sideBarExpand} GoTo={handleRender} />
-      <h1 onClick={logout} >hi</h1>
+         
+         <Navbars GoTo={handelRender} />
+         {
+           render==0 && <Instruction />
+         }
+        {
+            render==1 && <Instruction />
+        }
+        {
+            render==2 && <Application />
+        }
+        {
+            render==3 && <Contactus />
+        }
+        {
+            render==4 && <Profile />
+        }
+        {
+            render==5 && <Changepassword />
+        }
+         
         </>
     )
 }
